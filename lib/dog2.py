@@ -48,7 +48,8 @@ class Dog:
 
         CONN.commit()
 
-        self.id = CURSOR.lastrowid
+
+    self.id = CURSOR.lastrowid
 
     @classmethod
     def create (cls, name, breed):
@@ -103,51 +104,5 @@ class Dog:
         """
 
         row = CURSOR.execute(sql, (id,)).fetchone()
-
         if not row:
             return None
-
-        return Dog(
-            name=row[1],
-            breed=row[2],
-            id=row[0]
-        )
-
-    @classmethod
-    def find_or_create_by(cls, name=None, breed=None):
-        sql = """
-            SELECT * FROM dogs
-            WHERE (name, breed) = (?, ?)
-            LIMIT 1
-        """
-
-        row = CURSOR.execute(sql, (name, breed)).fetchone()
-        if not row:
-            sql = """
-                INSERT INTO dogs (name, breed)
-                VALUES (?, ?)
-            """
-
-            CURSOR.execute(sql, (name, breed))
-            return Dog(
-                name=name,
-                breed=breed,
-                id=CURSOR.lastrowid
-            )
-
-        return Dog(
-            name=row[1],
-            breed=row[2],
-            id=row[0]
-        )
-
-    def update(self):
-        sql = """
-            UPDATE dogs
-            SET name = ?,
-                breed = ?
-            WHERE id = ?
-        """
-
-        CURSOR.execute(sql, (self.name, self.breed, self.id))
-        CONN.commit()
